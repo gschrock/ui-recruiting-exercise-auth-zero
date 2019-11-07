@@ -1,9 +1,11 @@
 import React from "react";
-import styled from "styled-components";
+import Layout from "../components/Layout";
+import "./index.scss";
 
-const Title = styled.h1`
-  font-size: 50px;
-  color: ${({ theme }) => theme.colors.primary};
-`;
+/**
+ * Our default root view will also be the all
+ * quotes view.
+ */
+const Index = () => <Layout />;
 
-export default () => <Title>Theme works! 👏</Title>;
+export default Index;

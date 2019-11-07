@@ -4,7 +4,10 @@ import { ThemeProvider } from "styled-components";
 
 const theme = {
   colors: {
-    primary: "green"
+    background: "#E5E5E5",
+    authorText: "#606060",
+    subtleText: "#A5A8A8",
+    quoteText: "#EB5424"
   }
 };
 
