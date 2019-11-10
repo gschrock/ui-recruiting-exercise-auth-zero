@@ -12,16 +12,12 @@ const Card = ({ author, className, number, text }) => (
   </div>
 );
 
-// Text Style: Fakt/Desktop/Button 01
-// Font Style: bold
 const QuoteNumber = styled.div`
   font-size: 14px;
   letter-spacing: 1.5px;
   color: ${({ theme }) => theme.colors.subtleText};
 `;
 
-// Text Style: Fakt/Desktop/Body 02
-// Font Style: medium
 const QuoteText = styled.div`
   font-size: 20px;
   text-align: center;
@@ -29,8 +25,6 @@ const QuoteText = styled.div`
   color: ${({ theme }) => theme.colors.quoteText};
 `;
 
-// Text Style: Fakt/Desktop/Body 04
-// Font Style: medium
 const QuoteAuthor = styled.div`
   font-size: 16px;
   letter-spacing: 0.5px;
@@ -43,9 +37,9 @@ const StyledCard = styled(Card)`
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  margin: 1rem;
   background-color: #ffffff;
-  width: 376px;
+  margin-bottom: 2.5rem;
+  width: 100%;
   height: 308px;
   border-radius: 4px;
   filter: drop-shadow(10px 0px 5px rgba(0, 0, 0, 0.1));

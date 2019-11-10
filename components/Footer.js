@@ -1,8 +1,12 @@
 import styled from "styled-components";
 
-const Footer = ({ className }) => <div className={className}>Footer</div>;
+const Footer = ({ children, className }) => (
+  <div className={className}>{children}</div>
+);
 
 const StyledFooter = styled(Footer)`
+  padding: 0 8%;
+  margin-bottom: 116px;
   background-color: ${({ theme }) => theme.colors.background};
   color: black;
   width: 100%;
