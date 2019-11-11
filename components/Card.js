@@ -31,7 +31,6 @@ const QuoteAuthor = styled.div`
   color: ${({ theme }) => theme.colors.authorText};
 `;
 
-// shared Font Family: Fakt ProUI
 const StyledCard = styled(Card)`
   display: flex;
   flex-direction: column;

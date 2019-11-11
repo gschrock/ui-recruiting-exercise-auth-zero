@@ -5,6 +5,7 @@ import Card from "./Card";
 import Footer from "./Footer";
 import Header from "./Header";
 import LoadButton from "./LoadButton";
+import Select from "./Select";
 
 /**
  * Layout acts as the data hydration point for the app,
@@ -18,6 +19,14 @@ const Layout = props => {
   // Tracking if we are currently fetching any new data
   // for displaying loading states.
   const [isFetching, setIsFetching] = useState(false);
+  // Search select state.
+  const [selection, setSelection] = useState("Author");
+  const [isSearchMenuOpen, setIsSearchMenuOpen] = useState(false);
+  // Search input state.
+  const [searchInput, setSearchInput] = useState("");
+  // Sort select state.
+  const [sort, setSort] = useState("Author: A-Z");
+  const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
 
   /**
    * By passing an empty array to this useEffect hook as
@@ -68,13 +77,25 @@ const Layout = props => {
   };
 
   return (
-    <div className={props.className}>
+    <div
+      className={props.className}
+      onClick={() => {
+        /**
+         * Not the most elegant for handling a click
+         * elsewhere on document closing any open menus,
+         * but this achieves goal.
+         */
+        if (isSearchMenuOpen) setIsSearchMenuOpen(false);
+        if (isSortMenuOpen) setIsSortMenuOpen(false);
+      }}
+    >
       {/**
        * Head allows us to append elements to the
        * <head> block of html.
        */}
       <Head>
         <title>Auth0 | Quotes</title>
+        <script src="https://cdn.jsdelivr.net/npm/@auth0/cosmos@0.31.0/index.min.js"></script>
         <link
           rel="stylesheet"
           href="https://cdn.auth0.com/styleguide/core/2.0.5/core.min.css"
@@ -84,11 +105,27 @@ const Layout = props => {
           href="https://cdn.auth0.com/styleguide/components/2.0.0/components.min.css"
         />
       </Head>
-      <Header />
+      <Header
+        selection={selection}
+        setSelection={setSelection}
+        isSearchMenuOpen={isSearchMenuOpen}
+        setIsSearchMenuOpen={setIsSearchMenuOpen}
+      />
       {quotes ? (
         <>
           <ContentHeader>
             <TitleText>All Quotes</TitleText>
+            <SortMenu>
+              <Label>{"Sort by:"}</Label>
+              <Select
+                sort
+                listItems={["Author: A-Z", "Author: Z-A"]}
+                selection={sort}
+                setSelection={setSort}
+                isMenuOpen={isSortMenuOpen}
+                setIsMenuOpen={setIsSortMenuOpen}
+              />
+            </SortMenu>
           </ContentHeader>
           <Content>
             {quotes &&
@@ -108,8 +145,8 @@ const Layout = props => {
         </>
       ) : (
         <Spinner>
-          <div class="spinner spinner-lg is-auth0">
-            <div class="circle"></div>
+          <div className="spinner spinner-lg is-auth0">
+            <div className="circle"></div>
           </div>
         </Spinner>
       )}
@@ -130,6 +167,17 @@ const ContentHeader = styled.div`
   align-items: center;
   height: 120px;
   padding: 0 8%;
+`;
+
+const SortMenu = styled.div`
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+  color: ${({ theme }) => theme.colors.subtleText};
+`;
+
+const Label = styled.div`
+  padding-right: 20px;
 `;
 
 const TitleText = styled.div`

@@ -1,10 +1,17 @@
 import styled from "styled-components";
+import Select from "./Select";
 
 /**
  * Header will contain app title and search
  * component.
  */
-const Header = ({ className }) => (
+const Header = ({
+  className,
+  selection,
+  setSelection,
+  isSearchMenuOpen,
+  setIsSearchMenuOpen
+}) => (
   <div className={className}>
     <IconAndText>
       <Authsvg
@@ -23,6 +30,13 @@ const Header = ({ className }) => (
       <VerticalLine />
       <TitleText>Quotes</TitleText>
     </IconAndText>
+    <Select
+      selection={selection}
+      setSelection={setSelection}
+      isMenuOpen={isSearchMenuOpen}
+      setIsMenuOpen={setIsSearchMenuOpen}
+      listItems={["Author", "Quote"]}
+    />
   </div>
 );
 
