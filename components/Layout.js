@@ -110,6 +110,11 @@ const Layout = props => {
         setSelection={setSelection}
         isSearchMenuOpen={isSearchMenuOpen}
         setIsSearchMenuOpen={setIsSearchMenuOpen}
+        searchInput={searchInput}
+        setSearchInput={setSearchInput}
+        handleSearch={() => {
+          console.log("SEARCH");
+        }}
       />
       {quotes ? (
         <>

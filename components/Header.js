@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Search from "./Search";
 import Select from "./Select";
 
 /**
@@ -10,7 +11,10 @@ const Header = ({
   selection,
   setSelection,
   isSearchMenuOpen,
-  setIsSearchMenuOpen
+  setIsSearchMenuOpen,
+  searchInput,
+  setSearchInput,
+  handleSearch
 }) => (
   <div className={className}>
     <IconAndText>
@@ -36,6 +40,11 @@ const Header = ({
       isMenuOpen={isSearchMenuOpen}
       setIsMenuOpen={setIsSearchMenuOpen}
       listItems={["Author", "Quote"]}
+    />
+    <Search
+      handleSearch={handleSearch}
+      searchInput={searchInput}
+      setSearchInput={setSearchInput}
     />
   </div>
 );

@@ -30,7 +30,7 @@ const Select = ({
         onClick={e => setIsMenuOpen(!isMenuOpen)}
         style={
           sort
-            ? { borderRadius: "4px", width: "148px" }
+            ? { borderRadius: "4px", width: "148px", backgroundColor: "white" }
             : { borderRadius: "4px 0px 0px 4px" }
         }
       >
@@ -75,7 +75,6 @@ const List = styled.ul`
   position: absolute;
   font-size: 16px;
   letter-spacing: 0.5px;
-
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
 `;
