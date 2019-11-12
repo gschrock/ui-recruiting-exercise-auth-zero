@@ -81,6 +81,7 @@ const List = styled.ul`
 `;
 
 const ListItem = styled.li`
+  cursor: pointer;
   color: #000;
   text-decoration: none;
   padding: 8px 16px;
@@ -88,10 +89,6 @@ const ListItem = styled.li`
 
   :last-child {
     border-bottom: none;
-  }
-  :hover {
-    background-color: #f9f9fb;
-    color: white;
   }
 `;
 
