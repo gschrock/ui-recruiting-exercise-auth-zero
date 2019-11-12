@@ -1,16 +1,22 @@
-import Router from "next/router";
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
-import debounce from "../utils/debounce";
+import AppContext from "./AppContext";
 
-const Search = ({ className, handleSearch, searchInput, setSearchInput }) => {
+const Search = ({ className, handleSearch }) => {
+  const { searchInput, setSearchInput } = useContext(AppContext);
   return (
     <div className={className}>
       <SearchInput
+        /**
+         * Keeps focus on search input between navigations.
+         * We could search the document for the element, but
+         * this is sufficient for now so typing feels mostly
+         * seemless.
+         */
+        autoFocus
         onChange={e => {
-          Router.push("/searchResults");
           setSearchInput(e.currentTarget.value);
-          debounce(handleSearch(), 250);
+          handleSearch();
         }}
         value={searchInput}
         placeholder={"Enter your search term"}

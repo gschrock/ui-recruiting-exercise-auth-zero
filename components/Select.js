@@ -4,11 +4,11 @@ import styled from "styled-components";
 const Select = ({
   className,
   listItems,
+  sort = false,
   selection,
   setSelection,
   isMenuOpen,
-  setIsMenuOpen,
-  sort = false
+  setIsMenuOpen
 }) => {
   const getListItems = () => {
     const filteredItems = listItems.filter(item => item !== selection);
@@ -24,10 +24,11 @@ const Select = ({
       </ListItem>
     ));
   };
+
   return (
     <div className={className}>
       <SelectButton
-        onClick={e => setIsMenuOpen(!isMenuOpen)}
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
         style={
           sort
             ? { borderRadius: "4px", width: "148px", backgroundColor: "white" }

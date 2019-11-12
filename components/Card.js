@@ -18,7 +18,7 @@ const QuoteNumber = styled.div`
   color: ${({ theme }) => theme.colors.subtleText};
 `;
 
-const QuoteText = styled.div`
+const QuoteText = styled.p`
   font-size: 20px;
   text-align: center;
   padding: 0px 40px;
