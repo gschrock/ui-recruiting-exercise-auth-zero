@@ -8,10 +8,10 @@ const LoadButton = ({ className, handleClick, isLoading }) => (
   <button type="button" onClick={() => handleClick()} className={className}>
     <ButtonContent>
       <div
-        class="spinner spinner-xs"
+        className="spinner spinner-xs"
         style={isLoading ? {} : { visibility: "hidden" }}
       >
-        <div class="circle"></div>
+        <div className="circle"></div>
       </div>
       <ButtonText>Load more</ButtonText>
     </ButtonContent>

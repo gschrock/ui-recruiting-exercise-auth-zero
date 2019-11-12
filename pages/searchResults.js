@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import { useContext } from "react";
 import styled from "styled-components";
 import AppContext from "../components/AppContext";
 import Card from "../components/Card";
@@ -9,55 +9,32 @@ import SortMenu from "../components/SortMenu";
 import Spinner from "../components/Spinner";
 import "./index.scss";
 
-/**
- * Our default root view will also be the all
- * quotes view.
- */
-const Index = () => {
+const SearchResultsView = () => {
   const {
-    allQuotes,
-    setAllQuotes,
-    pagination,
-    setPagination,
+    searchQuotes,
+    setSearchQuotes,
+    searchPagination,
+    setSearchPagination,
+    selection,
+    searchInput,
     isFetching,
     setIsFetching
   } = useContext(AppContext);
 
-  /**
-   * By passing an empty array to this useEffect hook as
-   * a dependency, we fetch the inital quotes and set
-   * them and the pagination results with useState on
-   * ComponentDidMount.
-   */
-  useEffect(() => {
-    const fetchQuotes = async () => {
-      const url = `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6`;
-      const apiResponse = await fetch(url).then(response =>
-        response.json().then(data => data)
-      );
-      setPagination(apiResponse.pagination);
-      setAllQuotes(apiResponse.results);
-    };
-    /**
-     * If we already have allQuotes, don't overwrite
-     * what we already have saved on a re-route.
-     */
-    if (!allQuotes) {
-      fetchQuotes();
-    }
-  }, []);
-
   const fetchQuotes = () => {
     const fetchQuotesByPage = async () => {
-      let page = pagination.page;
+      let page = searchPagination.page;
       page = page + 1;
 
-      const url = `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6&page=${page}`;
+      const url =
+        selection === "Author"
+          ? `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6&page=${page}&authorName=${searchInput}`
+          : `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6&page=${page}&text=${searchInput}`;
       const apiResponse = await fetch(url).then(response =>
         response.json().then(data => data)
       );
 
-      const prefilteredQuotes = allQuotes.concat(apiResponse.results);
+      const prefilteredQuotes = searchQuotes.concat(apiResponse.results);
       const dedupedQuotes = prefilteredQuotes.reduce(
         (accumulator, currentItem) => {
           if (
@@ -69,8 +46,8 @@ const Index = () => {
         },
         []
       );
-      setPagination(apiResponse.pagination);
-      setAllQuotes(dedupedQuotes);
+      setSearchPagination(apiResponse.pagination);
+      setSearchQuotes(dedupedQuotes);
       setIsFetching(false);
     };
     setIsFetching(true);
@@ -79,15 +56,17 @@ const Index = () => {
 
   return (
     <Layout>
-      {allQuotes ? (
+      {searchQuotes ? (
         <>
           <ContentHeader>
-            <TitleText>All Quotes</TitleText>
+            <TitleText>Go back</TitleText>
             <SortMenu />
           </ContentHeader>
+          <ResultText>{`We found ${searchPagination &&
+            searchPagination.rowCount} results`}</ResultText>
           <Content>
-            {allQuotes &&
-              allQuotes.map(quote => (
+            {searchQuotes &&
+              searchQuotes.map(quote => (
                 <Card
                   key={quote.id}
                   number={quote.id}
@@ -130,6 +109,10 @@ const TitleText = styled.div`
   letter-spacing: -0.14px;
 `;
 
+const ResultText = styled.div`
+  padding: 0 8%;
+`;
+
 const StyledHR = styled.hr`
   height: 1px;
   width: 100%;
@@ -138,4 +121,4 @@ const StyledHR = styled.hr`
   margin-right: auto;
 `;
 
-export default Index;
+export default SearchResultsView;

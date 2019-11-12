@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const Footer = ({ children, className }) => (
-  <div className={className}>{children}</div>
+  <footer className={className}>{children}</footer>
 );
 
 const StyledFooter = styled(Footer)`
