@@ -27,11 +27,15 @@ export default class MyApp extends App {
     allQuotes: undefined,
     // Pagination data, includes pageSize and page.
     pagination: undefined,
+    // Count of allQuotes pre-dedupe by id.
+    allQuotesCount: 0,
     // The search quotes view quotes.
     searchQuotes: undefined,
     // Pagination data for search quotes.
     searchPagination: undefined,
-    // Search select state.
+    // Count of searchQuotes pre-dedupe by id.
+    searchQuotesCount: 0,
+    // Search select dropdown state.
     selection: "Author",
     /**
      * @todo use this with a sort function in search
@@ -67,6 +71,12 @@ export default class MyApp extends App {
     });
   };
 
+  setAllQuotesCount = allQuotesCount => {
+    this.setState({
+      allQuotesCount
+    });
+  };
+
   setSearchQuotes = searchQuotes => {
     this.setState({
       searchQuotes
@@ -76,6 +86,12 @@ export default class MyApp extends App {
   setSearchPagination = searchPagination => {
     this.setState({
       searchPagination
+    });
+  };
+
+  setSearchQuotesCount = searchQuotesCount => {
+    this.setState({
+      searchQuotesCount
     });
   };
 
@@ -128,10 +144,14 @@ export default class MyApp extends App {
           setAllQuotes: this.setAllQuotes,
           pagination: this.state.pagination,
           setPagination: this.setPagination,
+          allQuotesCount: this.state.allQuotesCount,
+          setAllQuotesCount: this.setAllQuotesCount,
           searchQuotes: this.state.searchQuotes,
           setSearchQuotes: this.setSearchQuotes,
           searchPagination: this.state.searchPagination,
           setSearchPagination: this.setSearchPagination,
+          searchQuotesCount: this.state.searchQuotesCount,
+          setSearchQuotesCount: this.setSearchQuotesCount,
           selection: this.state.selection,
           setSelection: this.setSelection,
           sortSelection: this.state.sortSelection,

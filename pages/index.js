@@ -19,6 +19,9 @@ const Index = () => {
     setAllQuotes,
     pagination,
     setPagination,
+    allQuotesCount,
+    setAllQuotesCount,
+    sortSelection,
     isFetching,
     setIsFetching
   } = useContext(AppContext);
@@ -34,6 +37,9 @@ const Index = () => {
       const url = `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6`;
       const apiResponse = await fetch(url).then(response =>
         response.json().then(data => data)
+      );
+      setAllQuotesCount(
+        apiResponse && apiResponse.results && apiResponse.results.length
       );
       setPagination(apiResponse.pagination);
       setAllQuotes(apiResponse.results);
@@ -58,7 +64,7 @@ const Index = () => {
       );
 
       const prefilteredQuotes = allQuotes.concat(apiResponse.results);
-      const dedupedQuotes = prefilteredQuotes.reduce(
+      let dedupedQuotes = prefilteredQuotes.reduce(
         (accumulator, currentItem) => {
           if (
             accumulator.findIndex(item => item.id === currentItem.id) === -1
@@ -69,6 +75,19 @@ const Index = () => {
         },
         []
       );
+      dedupedQuotes =
+        sortSelection === "Author: A-Z"
+          ? dedupedQuotes.sort((a, b) =>
+              a.authorName.localeCompare(b.authorName)
+            )
+          : dedupedQuotes.sort((a, b) =>
+              b.authorName.localeCompare(a.authorName)
+            );
+      setAllQuotesCount(
+        apiResponse && apiResponse.results && apiResponse.results.length
+          ? apiResponse.results.length + allQuotesCount
+          : allQuotesCount
+      );
       setPagination(apiResponse.pagination);
       setAllQuotes(dedupedQuotes);
       setIsFetching(false);
@@ -77,13 +96,19 @@ const Index = () => {
     fetchQuotesByPage();
   };
 
+  const showSortAndFooter = !!(
+    pagination &&
+    allQuotesCount &&
+    allQuotesCount !== pagination.rowCount
+  );
+
   return (
     <Layout>
       {allQuotes ? (
         <>
           <ContentHeader>
             <TitleText>All Quotes</TitleText>
-            <SortMenu />
+            {showSortAndFooter && <SortMenu />}
           </ContentHeader>
           <Content>
             {allQuotes &&
@@ -96,10 +121,16 @@ const Index = () => {
                 />
               ))}
           </Content>
-          <Footer>
-            <StyledHR />
-            <LoadButton isLoading={isFetching} handleClick={fetchQuotes} />
-          </Footer>
+          {showSortAndFooter && (
+            <Footer>
+              <StyledHR />
+              {/**
+               * DISABLE load button when allQuotes length
+               * is equal to pagination.rowCount, maybe change label?
+               */}
+              <LoadButton isLoading={isFetching} handleClick={fetchQuotes} />
+            </Footer>
+          )}
         </>
       ) : (
         <Spinner />
@@ -123,7 +154,7 @@ const ContentHeader = styled.div`
   padding: 0 8%;
 `;
 
-const TitleText = styled.div`
+const TitleText = styled.span`
   font-size: 22.5px;
   text-align: left;
   vertical-align: top;

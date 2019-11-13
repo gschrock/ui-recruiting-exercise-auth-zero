@@ -1,27 +1,45 @@
+import { withRouter } from "next/router";
 import React, { useContext } from "react";
 import styled from "styled-components";
 import AppContext from "./AppContext";
 
-const Search = ({ className, handleSearch }) => {
-  const { searchInput, setSearchInput } = useContext(AppContext);
+const Search = ({ className, handleSearch, router }) => {
+  const { searchInput, setSearchInput, setSearchQuotes } = useContext(
+    AppContext
+  );
+
   return (
     <div className={className}>
       <SearchInput
         /**
-         * Keeps focus on search input between navigations.
-         * We could search the document for the element, but
-         * this is sufficient for now so typing feels mostly
-         * seemless.
+         * If the route is the search results view, give the
+         * search input element focus.
          */
-        autoFocus
+        autoFocus={router.pathname === "/searchResults"}
         onChange={e => {
           setSearchInput(e.currentTarget.value);
-          handleSearch();
+          handleSearch(e.currentTarget.value);
         }}
         value={searchInput}
         placeholder={"Enter your search term"}
       ></SearchInput>
-      <Icon className={"icon-budicon-489 icon"} />
+      {/**
+       * If we have a search input value, display an
+       * x icon that can remove the search input and
+       * reset our search quotes.
+       */}
+      {searchInput && searchInput.length > 0 ? (
+        <Icon
+          style={{ cursor: "pointer" }}
+          onClick={() => {
+            setSearchInput("");
+            setSearchQuotes(undefined);
+          }}
+          className={"icon-budicon-471"}
+        />
+      ) : (
+        <Icon className={"icon-budicon-489 icon"} />
+      )}
     </div>
   );
 };
@@ -51,4 +69,4 @@ const StyledSearch = styled(Search)`
   color: ${({ theme }) => theme.colors.subtleText};
 `;
 
-export default StyledSearch;
+export default withRouter(StyledSearch);

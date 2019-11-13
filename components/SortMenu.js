@@ -30,6 +30,7 @@ const Label = styled.div`
 `;
 
 const StyledSortMenu = styled(SortMenu)`
+  cursor: pointer;
   display: flex;
   margin-left: auto;
   align-items: center;
