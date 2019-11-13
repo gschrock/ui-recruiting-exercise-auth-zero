@@ -14,7 +14,9 @@ const Header = ({ className }) => {
   const {
     setSearchQuotes,
     setSearchPagination,
+    setSearchQuotesCount,
     selection,
+    sortSelection,
     setSelection,
     isSearchMenuOpen,
     setIsSearchMenuOpen,
@@ -22,17 +24,67 @@ const Header = ({ className }) => {
     setIsFetching
   } = useContext(AppContext);
 
-  const handleSearch = () => {
+  const handleSearch = searchValue => {
     Router.push("/searchResults");
+
     const fetchQuotes = async () => {
       const url =
         selection === "Author"
+          ? `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6&authorName=${searchValue}`
+          : `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6&text=${searchValue}`;
+      const apiResponse = await fetch(url).then(response =>
+        response.json().then(data => data)
+      );
+      const sortedQuotes =
+        sortSelection === "Author: A-Z"
+          ? apiResponse &&
+            apiResponse.results &&
+            apiResponse.results.sort((a, b) =>
+              a.authorName.localeCompare(b.authorName)
+            )
+          : apiResponse &&
+            apiResponse.results &&
+            apiResponse.results.sort((a, b) =>
+              b.authorName.localeCompare(a.authorName)
+            );
+      setSearchQuotesCount(
+        apiResponse && apiResponse.results && apiResponse.results.length
+      );
+      setSearchQuotes(sortedQuotes);
+      setSearchPagination(apiResponse.pagination);
+      setIsFetching(false);
+    };
+    setIsFetching(true);
+    if (searchValue) {
+      fetchQuotes();
+    }
+  };
+
+  const updateSelectSearch = item => {
+    const fetchQuotes = async () => {
+      const url =
+        item === "Author"
           ? `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6&authorName=${searchInput}`
           : `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6&text=${searchInput}`;
       const apiResponse = await fetch(url).then(response =>
         response.json().then(data => data)
       );
-      setSearchQuotes(apiResponse.results);
+      const sortedQuotes =
+        sortSelection === "Author: A-Z"
+          ? apiResponse &&
+            apiResponse.results &&
+            apiResponse.results.sort((a, b) =>
+              a.authorName.localeCompare(b.authorName)
+            )
+          : apiResponse &&
+            apiResponse.results &&
+            apiResponse.results.sort((a, b) =>
+              b.authorName.localeCompare(a.authorName)
+            );
+      setSearchQuotesCount(
+        apiResponse && apiResponse.results && apiResponse.results.length
+      );
+      setSearchQuotes(sortedQuotes);
       setSearchPagination(apiResponse.pagination);
       setIsFetching(false);
     };
@@ -65,8 +117,11 @@ const Header = ({ className }) => {
         isMenuOpen={isSearchMenuOpen}
         setIsMenuOpen={setIsSearchMenuOpen}
         listItems={["Author", "Quote"]}
+        updateSearchSelection={item => debounce(updateSelectSearch(item), 200)}
       />
-      <Search handleSearch={() => debounce(handleSearch(), 2000)} />
+      <Search
+        handleSearch={searchValue => debounce(handleSearch(searchValue), 2000)}
+      />
     </header>
   );
 };
@@ -77,10 +132,12 @@ const IconAndText = styled.div`
 `;
 
 const Authsvg = styled.svg`
+  height: 30px;
+  width: 100%;
   padding-right: 6px;
 `;
 
-const TitleText = styled.div`
+const TitleText = styled.span`
   font-size: 22.5px;
   text-align: left;
   vertical-align: top;
@@ -98,6 +155,7 @@ const StyledHeader = styled(Header)`
   align-items: center;
   padding: 0 8%;
   background-color: #ffffff;
+  border-bottom: 1px #e3e5e7 solid;
   color: black;
   width: 100%;
   height: 80px;

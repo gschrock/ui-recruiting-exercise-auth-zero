@@ -1,10 +1,10 @@
 import React, { useContext, useEffect } from "react";
 import styled from "styled-components";
 import AppContext from "../components/AppContext";
-import Card from "../components/Card";
+import Content from "../components/Content";
 import Footer from "../components/Footer";
 import Layout from "../components/Layout";
-import LoadButton from "../components/LoadButton";
+import LoadMore from "../components/LoadMore";
 import SortMenu from "../components/SortMenu";
 import Spinner from "../components/Spinner";
 import "./index.scss";
@@ -19,6 +19,9 @@ const Index = () => {
     setAllQuotes,
     pagination,
     setPagination,
+    allQuotesCount,
+    setAllQuotesCount,
+    sortSelection,
     isFetching,
     setIsFetching
   } = useContext(AppContext);
@@ -35,6 +38,9 @@ const Index = () => {
       const apiResponse = await fetch(url).then(response =>
         response.json().then(data => data)
       );
+      setAllQuotesCount(
+        apiResponse && apiResponse.results && apiResponse.results.length
+      );
       setPagination(apiResponse.pagination);
       setAllQuotes(apiResponse.results);
     };
@@ -47,7 +53,7 @@ const Index = () => {
     }
   }, []);
 
-  const fetchQuotes = () => {
+  const fetchMoreQuotes = () => {
     const fetchQuotesByPage = async () => {
       let page = pagination.page;
       page = page + 1;
@@ -58,7 +64,7 @@ const Index = () => {
       );
 
       const prefilteredQuotes = allQuotes.concat(apiResponse.results);
-      const dedupedQuotes = prefilteredQuotes.reduce(
+      let dedupedQuotes = prefilteredQuotes.reduce(
         (accumulator, currentItem) => {
           if (
             accumulator.findIndex(item => item.id === currentItem.id) === -1
@@ -69,6 +75,19 @@ const Index = () => {
         },
         []
       );
+      dedupedQuotes =
+        sortSelection === "Author: A-Z"
+          ? dedupedQuotes.sort((a, b) =>
+              a.authorName.localeCompare(b.authorName)
+            )
+          : dedupedQuotes.sort((a, b) =>
+              b.authorName.localeCompare(a.authorName)
+            );
+      setAllQuotesCount(
+        apiResponse && apiResponse.results && apiResponse.results.length
+          ? apiResponse.results.length + allQuotesCount
+          : allQuotesCount
+      );
       setPagination(apiResponse.pagination);
       setAllQuotes(dedupedQuotes);
       setIsFetching(false);
@@ -77,29 +96,31 @@ const Index = () => {
     fetchQuotesByPage();
   };
 
+  const showSortAndFooter = !!(
+    pagination &&
+    allQuotesCount &&
+    allQuotesCount !== pagination.rowCount
+  );
+
   return (
     <Layout>
       {allQuotes ? (
         <>
+          {/**
+           * Will need to listen for device width
+           * here and column layout this instead when
+           * on a small device
+           */}
           <ContentHeader>
             <TitleText>All Quotes</TitleText>
-            <SortMenu />
+            {showSortAndFooter && <SortMenu />}
           </ContentHeader>
-          <Content>
-            {allQuotes &&
-              allQuotes.map(quote => (
-                <Card
-                  key={quote.id}
-                  number={quote.id}
-                  text={quote.text}
-                  author={quote.authorName}
-                />
-              ))}
-          </Content>
-          <Footer>
-            <StyledHR />
-            <LoadButton isLoading={isFetching} handleClick={fetchQuotes} />
-          </Footer>
+          <Content quotes={allQuotes} />
+          {showSortAndFooter && (
+            <Footer>
+              <LoadMore isLoading={isFetching} handleClick={fetchMoreQuotes} />
+            </Footer>
+          )}
         </>
       ) : (
         <Spinner />
@@ -108,14 +129,6 @@ const Index = () => {
   );
 };
 
-const Content = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 376px));
-  justify-items: center;
-  justify-content: space-between;
-  padding: 0 8%;
-`;
-
 const ContentHeader = styled.div`
   display: flex;
   align-items: center;
@@ -123,19 +136,13 @@ const ContentHeader = styled.div`
   padding: 0 8%;
 `;
 
-const TitleText = styled.div`
+const TitleText = styled.h1`
   font-size: 22.5px;
   text-align: left;
   vertical-align: top;
   letter-spacing: -0.14px;
-`;
-
-const StyledHR = styled.hr`
-  height: 1px;
-  width: 100%;
-  color: ${({ theme }) => theme.colors.solidLine};
-  margin-left: auto;
-  margin-right: auto;
+  /* overwrite default h1 margin */
+  margin: 0px;
 `;
 
 export default Index;

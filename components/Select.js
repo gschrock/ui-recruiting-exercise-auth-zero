@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
+import AppContext from "./AppContext";
 
 const Select = ({
   className,
@@ -8,8 +9,36 @@ const Select = ({
   selection,
   setSelection,
   isMenuOpen,
-  setIsMenuOpen
+  setIsMenuOpen,
+  updateSearchSelection
 }) => {
+  const { allQuotes, setAllQuotes, searchQuotes, setSearchQuotes } = useContext(
+    AppContext
+  );
+  // "Author: A-Z", "Author: Z-A"
+  const updateSortSelection = item => {
+    if (item === "Author: A-Z") {
+      allQuotes &&
+        setAllQuotes(
+          allQuotes.sort((a, b) => a.authorName.localeCompare(b.authorName))
+        );
+      searchQuotes &&
+        setSearchQuotes(
+          searchQuotes.sort((a, b) => a.authorName.localeCompare(b.authorName))
+        );
+    }
+    if (item === "Author: Z-A") {
+      allQuotes &&
+        setAllQuotes(
+          allQuotes.sort((a, b) => b.authorName.localeCompare(a.authorName))
+        );
+      searchQuotes &&
+        setSearchQuotes(
+          searchQuotes.sort((a, b) => b.authorName.localeCompare(a.authorName))
+        );
+    }
+  };
+
   const getListItems = () => {
     const filteredItems = listItems.filter(item => item !== selection);
     return filteredItems.map(item => (
@@ -18,6 +47,8 @@ const Select = ({
         onClick={() => {
           setSelection(item);
           setIsMenuOpen(!isMenuOpen);
+          updateSearchSelection && updateSearchSelection(item);
+          sort && updateSortSelection(item);
         }}
       >
         {item}
@@ -93,6 +124,7 @@ const ListItem = styled.li`
 `;
 
 const StyledSelect = styled(Select)`
+  cursor: pointer;
   margin-left: auto;
   color: ${({ theme }) => theme.colors.subtleText};
 `;
