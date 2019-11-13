@@ -50,7 +50,10 @@ export default class MyApp extends App {
     isSortMenuOpen: false,
     // Tracking if we are currently fetching any new data
     // for displaying loading states.
-    isFetching: false
+    isFetching: false,
+    // Tracking if we are currently fetching any new data
+    // on additional pages for displaying loading states.
+    isFetchingMore: false
   };
 
   componentDidMount = () => {};
@@ -135,6 +138,10 @@ export default class MyApp extends App {
     this.setState({ isFetching });
   };
 
+  setIsFetchingMore = isFetchingMore => {
+    this.setState({ isFetchingMore });
+  };
+
   render() {
     const { Component, pageProps } = this.props;
     return (
@@ -163,7 +170,9 @@ export default class MyApp extends App {
           isSortMenuOpen: this.state.isSortMenuOpen,
           setIsSortMenuOpen: this.setIsSortMenuOpen,
           isFetching: this.state.isFetching,
-          setIsFetching: this.setIsFetching
+          setIsFetching: this.setIsFetching,
+          isFetchingMore: this.state.isFetchingMore,
+          setIsFetchingMore: this.setIsFetchingMore
         }}
       >
         <ThemeProvider theme={theme}>

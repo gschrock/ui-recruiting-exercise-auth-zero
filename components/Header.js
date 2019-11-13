@@ -55,7 +55,9 @@ const Header = ({ className }) => {
       setIsFetching(false);
     };
     setIsFetching(true);
-    fetchQuotes();
+    if (searchValue) {
+      fetchQuotes();
+    }
   };
 
   const updateSelectSearch = item => {

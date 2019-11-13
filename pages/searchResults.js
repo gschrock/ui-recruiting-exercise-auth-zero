@@ -2,15 +2,15 @@ import Link from "next/link";
 import { useContext } from "react";
 import styled from "styled-components";
 import AppContext from "../components/AppContext";
-import Card from "../components/Card";
+import Content from "../components/Content";
 import Footer from "../components/Footer";
 import Layout from "../components/Layout";
-import LoadButton from "../components/LoadButton";
+import LoadMore from "../components/LoadMore";
 import SortMenu from "../components/SortMenu";
 import Spinner from "../components/Spinner";
 import "./index.scss";
 
-const SearchResultsView = ({ router }) => {
+const SearchResultsView = () => {
   const {
     searchQuotes,
     setSearchQuotes,
@@ -22,10 +22,11 @@ const SearchResultsView = ({ router }) => {
     sortSelection,
     searchInput,
     isFetching,
-    setIsFetching
+    isFetchingMore,
+    setIsFetchingMore
   } = useContext(AppContext);
 
-  const fetchQuotes = () => {
+  const fetchMoreQuotes = () => {
     const fetchQuotesByPage = async () => {
       let page = searchPagination.page;
       page = page + 1;
@@ -65,9 +66,9 @@ const SearchResultsView = ({ router }) => {
       );
       setSearchPagination(apiResponse.pagination);
       setSearchQuotes(dedupedQuotes);
-      setIsFetching(false);
+      setIsFetchingMore(false);
     };
-    setIsFetching(true);
+    setIsFetchingMore(true);
     fetchQuotesByPage();
   };
 
@@ -79,13 +80,8 @@ const SearchResultsView = ({ router }) => {
 
   return (
     <Layout>
-      {searchQuotes ? (
+      {!isFetching ? (
         <>
-          {/**
-           * Will need to listen for device width
-           * here and column layout this instead when
-           * on a small device
-           */}
           <ContentHeader>
             <Link href="/">
               <GoBackLink>
@@ -100,21 +96,13 @@ const SearchResultsView = ({ router }) => {
               ? `We found ${searchPagination.rowCount} results`
               : "No results found"
           }`}</ResultText>
-          <Content>
-            {searchQuotes &&
-              searchQuotes.map(quote => (
-                <Card
-                  key={quote.id}
-                  number={quote.id}
-                  text={quote.text}
-                  author={quote.authorName}
-                />
-              ))}
-          </Content>
+          <Content quotes={searchQuotes} />
           {showSortAndFooter && (
             <Footer>
-              <StyledHR />
-              <LoadButton isLoading={isFetching} handleClick={fetchQuotes} />
+              <LoadMore
+                isLoading={isFetchingMore}
+                handleClick={fetchMoreQuotes}
+              />
             </Footer>
           )}
         </>
@@ -125,15 +113,7 @@ const SearchResultsView = ({ router }) => {
   );
 };
 
-const Content = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 376px));
-  justify-items: center;
-  justify-content: space-between;
-  padding: 0 8%;
-`;
-
-const ContentHeader = styled.div`
+const ContentHeader = styled.nav`
   display: flex;
   align-items: center;
   padding: 45px 8% 20px 8%;
@@ -153,20 +133,13 @@ const GoBackLink = styled.a`
   letter-spacing: 0.5px;
 `;
 
-const ResultText = styled.div`
+const ResultText = styled.h1`
   padding: 0 8% 40px 8%;
   font-weight: bold;
   font-size: 22.5px;
   letter-spacing: -0.14px;
-  margin-top: -20px;
-`;
-
-const StyledHR = styled.hr`
-  height: 1px;
-  width: 100%;
-  color: ${({ theme }) => theme.colors.solidLine};
-  margin-left: auto;
-  margin-right: auto;
+  /* overwrite default h1 margin */
+  margin: -20px 0px 0px 0px;
 `;
 
 export default SearchResultsView;

@@ -5,34 +5,39 @@ import styled from "styled-components";
  * it's number, and author.
  */
 const Card = ({ author, className, number, text }) => (
-  <div className={className}>
+  <section className={className}>
     <QuoteNumber>{`QUOTE #${number}`}</QuoteNumber>
     <QuoteText>{`"${text}"`}</QuoteText>
     <QuoteAuthor>{author ? author : "No author"}</QuoteAuthor>
-  </div>
+  </section>
 );
 
-const QuoteNumber = styled.div`
+const QuoteNumber = styled.h1`
   padding: 20px 0px 10px 0px;
   font-weight: bold;
   font-size: 14px;
   letter-spacing: 1.5px;
   color: ${({ theme }) => theme.colors.subtleText};
+  /* overwrite default h1 margin */
+  margin: 0px;
 `;
 
 const QuoteText = styled.p`
-  padding: 0px 40px 47px 40px;
   font-size: 20px;
   text-align: center;
   padding: 0px 40px;
   color: ${({ theme }) => theme.colors.quoteText};
+  /* overwrite default p margin */
+  margin: 0px;
 `;
 
-const QuoteAuthor = styled.div`
+const QuoteAuthor = styled.h1`
   padding-top: 10px;
   font-size: 16px;
   letter-spacing: 0.5px;
   color: ${({ theme }) => theme.colors.authorText};
+  /* overwrite default h1 margin */
+  margin: 0px;
 `;
 
 const StyledCard = styled(Card)`

@@ -12,7 +12,7 @@ const Layout = ({ className, children }) => {
     setIsSortMenuOpen
   } = useContext(AppContext);
   return (
-    <div
+    <main
       className={className}
       onClick={() => {
         /**
@@ -41,7 +41,7 @@ const Layout = ({ className, children }) => {
       </Head>
       <Header />
       {children}
-    </div>
+    </main>
   );
 };
 
