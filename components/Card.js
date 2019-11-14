@@ -1,16 +1,30 @@
+import Link from "next/link";
+import { useContext } from "react";
 import styled from "styled-components";
+import AppContext from "../components/AppContext";
 
 /**
  * Card component for displaying a quote,
  * it's number, and author.
  */
-const Card = ({ author, className, number, text }) => (
-  <section className={className}>
-    <QuoteNumber>{`QUOTE #${number}`}</QuoteNumber>
-    <QuoteText>{`"${text}"`}</QuoteText>
-    <QuoteAuthor>{author ? author : "No author"}</QuoteAuthor>
-  </section>
-);
+const Card = ({ author, className, number, text, quoteCardType, index }) => {
+  const { setQuoteCardType, setQuoteDetailIndex } = useContext(AppContext);
+  return (
+    <Link href="/detailView">
+      <section
+        className={className}
+        onClick={() => {
+          setQuoteCardType(quoteCardType);
+          setQuoteDetailIndex(index);
+        }}
+      >
+        <QuoteNumber>{`QUOTE #${number}`}</QuoteNumber>
+        <QuoteText>{`"${text}"`}</QuoteText>
+        <QuoteAuthor>{author ? author : "No author"}</QuoteAuthor>
+      </section>
+    </Link>
+  );
+};
 
 const QuoteNumber = styled.h1`
   padding: 20px 0px 10px 0px;
@@ -41,6 +55,7 @@ const QuoteAuthor = styled.h1`
 `;
 
 const StyledCard = styled(Card)`
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   justify-content: center;

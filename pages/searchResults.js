@@ -36,7 +36,12 @@ const SearchResultsView = () => {
           ? `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6&page=${page}&authorName=${searchInput}`
           : `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6&page=${page}&text=${searchInput}`;
       const apiResponse = await fetch(url).then(response =>
-        response.json().then(data => data)
+        response
+          .json()
+          .then(data => data)
+          .catch(error => {
+            console.log("Error occurred:", error);
+          })
       );
 
       const prefilteredQuotes = searchQuotes.concat(apiResponse.results);
@@ -96,7 +101,7 @@ const SearchResultsView = () => {
               ? `We found ${searchPagination.rowCount} results`
               : "No results found"
           }`}</ResultText>
-          <Content quotes={searchQuotes} />
+          <Content quotes={searchQuotes} quoteCardType={"search"} />
           {showSortAndFooter && (
             <Footer>
               <LoadMore

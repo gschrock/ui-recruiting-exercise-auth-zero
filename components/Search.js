@@ -4,13 +4,25 @@ import styled from "styled-components";
 import AppContext from "./AppContext";
 
 const Search = ({ className, handleSearch, router }) => {
-  const { searchInput, setSearchInput, setSearchQuotes } = useContext(
-    AppContext
-  );
+  const {
+    searchInput,
+    setSearchInput,
+    setSearchQuotes,
+    setSearchPagination,
+    setSearchQuotesCount
+  } = useContext(AppContext);
+
+  /**
+   * Disable select component while on detail view. It does not
+   * make sense to change the selection type here and it causes
+   * an error.
+   */
+  const disableForDetailRoute = router.pathname === "/detailView";
 
   return (
     <div className={className}>
       <SearchInput
+        disabled={disableForDetailRoute}
         /**
          * If the route is the search results view, give the
          * search input element focus.
@@ -26,14 +38,22 @@ const Search = ({ className, handleSearch, router }) => {
       {/**
        * If we have a search input value, display an
        * x icon that can remove the search input and
-       * reset our search quotes.
+       * reset our search quotes data.
        */}
       {searchInput && searchInput.length > 0 ? (
         <Icon
-          style={{ cursor: "pointer" }}
+          style={
+            disableForDetailRoute
+              ? { cursor: "not-allowed" }
+              : { cursor: "pointer" }
+          }
           onClick={() => {
-            setSearchInput("");
-            setSearchQuotes(undefined);
+            if (!disableForDetailRoute) {
+              setSearchInput("");
+              setSearchQuotes(undefined);
+              setSearchPagination(undefined);
+              setSearchQuotesCount(0);
+            }
           }}
           className={"icon-budicon-471"}
         />
