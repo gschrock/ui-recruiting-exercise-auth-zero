@@ -17,6 +17,10 @@ body {
   font-family: fakt-web, Helvetica Neue, Hevetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  input[disabled] {
+    cursor: not-allowed;
+    background-color: #f9f9fb;
+  }
 }
 
 #root {

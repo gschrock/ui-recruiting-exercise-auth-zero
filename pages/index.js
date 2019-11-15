@@ -36,7 +36,12 @@ const Index = () => {
     const fetchQuotes = async () => {
       const url = `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6`;
       const apiResponse = await fetch(url).then(response =>
-        response.json().then(data => data)
+        response
+          .json()
+          .then(data => data)
+          .catch(error => {
+            console.log("Error occurred:", error);
+          })
       );
       setAllQuotesCount(
         apiResponse && apiResponse.results && apiResponse.results.length
@@ -60,7 +65,12 @@ const Index = () => {
 
       const url = `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6&page=${page}`;
       const apiResponse = await fetch(url).then(response =>
-        response.json().then(data => data)
+        response
+          .json()
+          .then(data => data)
+          .catch(error => {
+            console.log("Error occurred:", error);
+          })
       );
 
       const prefilteredQuotes = allQuotes.concat(apiResponse.results);
@@ -115,7 +125,7 @@ const Index = () => {
             <TitleText>All Quotes</TitleText>
             {showSortAndFooter && <SortMenu />}
           </ContentHeader>
-          <Content quotes={allQuotes} />
+          <Content quotes={allQuotes} quoteCardType={"all"} />
           {showSortAndFooter && (
             <Footer>
               <LoadMore isLoading={isFetching} handleClick={fetchMoreQuotes} />

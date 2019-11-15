@@ -28,36 +28,56 @@ const Header = ({ className }) => {
     Router.push("/searchResults");
 
     const fetchQuotes = async () => {
-      const url =
-        selection === "Author"
-          ? `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6&authorName=${searchValue}`
-          : `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6&text=${searchValue}`;
-      const apiResponse = await fetch(url).then(response =>
-        response.json().then(data => data)
-      );
-      const sortedQuotes =
-        sortSelection === "Author: A-Z"
-          ? apiResponse &&
-            apiResponse.results &&
-            apiResponse.results.sort((a, b) =>
-              a.authorName.localeCompare(b.authorName)
-            )
-          : apiResponse &&
-            apiResponse.results &&
-            apiResponse.results.sort((a, b) =>
-              b.authorName.localeCompare(a.authorName)
-            );
-      setSearchQuotesCount(
-        apiResponse && apiResponse.results && apiResponse.results.length
-      );
-      setSearchQuotes(sortedQuotes);
-      setSearchPagination(apiResponse.pagination);
-      setIsFetching(false);
+      /**
+       * I really don't like this, but there is a
+       * case where if the user deletes values too
+       * quickly we can generate a 404 due to a
+       * malformed url and async shenanigans. This
+       * checks for that scenario and resets our search
+       * quote data after a hopefully sufficient timeout.
+       */
+      if (!searchValue || searchValue.length === 0) {
+        setTimeout(() => {
+          setIsFetching(false);
+          setSearchQuotesCount(0);
+          setSearchQuotes(undefined);
+          setSearchPagination(undefined);
+        }, 600);
+      } else {
+        const url =
+          selection === "Author"
+            ? `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6&authorName=${searchValue}`
+            : `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6&text=${searchValue}`;
+        const apiResponse = await fetch(url).then(response =>
+          response
+            .json()
+            .then(data => data)
+            .catch(error => {
+              console.log("Error occurred:", error);
+            })
+        );
+        const sortedQuotes =
+          sortSelection === "Author: A-Z"
+            ? apiResponse &&
+              apiResponse.results &&
+              apiResponse.results.sort((a, b) =>
+                a.authorName.localeCompare(b.authorName)
+              )
+            : apiResponse &&
+              apiResponse.results &&
+              apiResponse.results.sort((a, b) =>
+                b.authorName.localeCompare(a.authorName)
+              );
+        setSearchQuotesCount(
+          apiResponse && apiResponse.results && apiResponse.results.length
+        );
+        setSearchQuotes(sortedQuotes);
+        setSearchPagination(apiResponse.pagination);
+        setIsFetching(false);
+      }
     };
     setIsFetching(true);
-    if (searchValue) {
-      fetchQuotes();
-    }
+    fetchQuotes();
   };
 
   const updateSelectSearch = item => {
@@ -67,7 +87,12 @@ const Header = ({ className }) => {
           ? `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6&authorName=${searchInput}`
           : `https://auth0-exercise-quotes-api.herokuapp.com/api/quotes?pageSize=6&text=${searchInput}`;
       const apiResponse = await fetch(url).then(response =>
-        response.json().then(data => data)
+        response
+          .json()
+          .then(data => data)
+          .catch(error => {
+            console.log("Error occurred:", error);
+          })
       );
       const sortedQuotes =
         sortSelection === "Author: A-Z"
@@ -120,7 +145,7 @@ const Header = ({ className }) => {
         updateSearchSelection={item => debounce(updateSelectSearch(item), 200)}
       />
       <Search
-        handleSearch={searchValue => debounce(handleSearch(searchValue), 2000)}
+        handleSearch={searchValue => debounce(handleSearch(searchValue), 200)}
       />
     </header>
   );

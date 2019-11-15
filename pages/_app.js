@@ -37,10 +37,6 @@ export default class MyApp extends App {
     searchQuotesCount: 0,
     // Search select dropdown state.
     selection: "Author",
-    /**
-     * @todo use this with a sort function in search
-     * and all quotes views.
-     */
     // Sort selection for quote "sort by" dropdown.
     sortSelection: "Author: A-Z",
     // Tracks search input by user.
@@ -53,7 +49,11 @@ export default class MyApp extends App {
     isFetching: false,
     // Tracking if we are currently fetching any new data
     // on additional pages for displaying loading states.
-    isFetchingMore: false
+    isFetchingMore: false,
+    // Tracks type of quote cards displayed in detail view.
+    quoteCardType: "all",
+    // Tracks index of quote in center of detail view.
+    quoteDetailIndex: undefined
   };
 
   componentDidMount = () => {};
@@ -142,6 +142,14 @@ export default class MyApp extends App {
     this.setState({ isFetchingMore });
   };
 
+  setQuoteCardType = quoteCardType => {
+    this.setState({ quoteCardType });
+  };
+
+  setQuoteDetailIndex = quoteDetailIndex => {
+    this.setState({ quoteDetailIndex });
+  };
+
   render() {
     const { Component, pageProps } = this.props;
     return (
@@ -172,7 +180,11 @@ export default class MyApp extends App {
           isFetching: this.state.isFetching,
           setIsFetching: this.setIsFetching,
           isFetchingMore: this.state.isFetchingMore,
-          setIsFetchingMore: this.setIsFetchingMore
+          setIsFetchingMore: this.setIsFetchingMore,
+          quoteCardType: this.state.quoteCardType,
+          setQuoteCardType: this.setQuoteCardType,
+          quoteDetailIndex: this.state.quoteDetailIndex,
+          setQuoteDetailIndex: this.setQuoteDetailIndex
         }}
       >
         <ThemeProvider theme={theme}>

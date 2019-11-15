@@ -1,9 +1,11 @@
+import { withRouter } from "next/router";
 import React, { useContext } from "react";
 import styled from "styled-components";
 import AppContext from "./AppContext";
 
 const Select = ({
   className,
+  router,
   listItems,
   sort = false,
   selection,
@@ -56,10 +58,20 @@ const Select = ({
     ));
   };
 
+  /**
+   * Disable select component while on detail view. It does not
+   * make sense to change the selection type here and it causes
+   * an error.
+   */
+  const disableForDetailRoute = router.pathname === "/detailView";
+
   return (
-    <div className={className}>
+    <div
+      className={className}
+      style={disableForDetailRoute ? { cursor: "not-allowed" } : {}}
+    >
       <SelectButton
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        onClick={() => !disableForDetailRoute && setIsMenuOpen(!isMenuOpen)}
         style={
           sort
             ? { borderRadius: "4px", width: "148px", backgroundColor: "white" }
@@ -129,4 +141,4 @@ const StyledSelect = styled(Select)`
   color: ${({ theme }) => theme.colors.subtleText};
 `;
 
-export default StyledSelect;
+export default withRouter(StyledSelect);

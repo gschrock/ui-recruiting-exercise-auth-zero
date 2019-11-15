@@ -2,21 +2,21 @@ import React from "react";
 import styled from "styled-components";
 import Card from "../components/Card";
 
-const Content = ({ className, quotes }) => {
-  return (
-    <article className={className}>
-      {quotes &&
-        quotes.map(quote => (
-          <Card
-            key={quote.id}
-            number={quote.id}
-            text={quote.text}
-            author={quote.authorName}
-          />
-        ))}
-    </article>
-  );
-};
+const Content = ({ className, quotes, quoteCardType }) => (
+  <article className={className}>
+    {quotes &&
+      quotes.map((quote, index) => (
+        <Card
+          key={quote.id}
+          number={quote.id}
+          text={quote.text}
+          author={quote.authorName}
+          index={index}
+          quoteCardType={quoteCardType}
+        />
+      ))}
+  </article>
+);
 
 const StyledContent = styled(Content)`
   display: grid;
